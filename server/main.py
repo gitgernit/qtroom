@@ -1,5 +1,6 @@
-import server
 import asyncio
+
+import server
 
 server = server.Server()
 

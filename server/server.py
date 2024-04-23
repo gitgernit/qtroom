@@ -1,12 +1,11 @@
 __all__ = []
 
-import redis
-import dotenv
-
 import asyncio
 import os
 
+import dotenv
 import handlers
+import redis
 
 dotenv.load_dotenv()
 
@@ -21,6 +20,7 @@ class Server:
     def __init__(self):
         self.redis = redis.Redis(host=REDIS_HOST, port=REDIS_PORT,
                                  db=REDIS_DB)
+        self.clients = []
 
     async def startup(self):
         server = await asyncio.start_server(
@@ -33,10 +33,14 @@ class Server:
             await server.serve_forever()
 
     async def handle_client(self, reader, writer):
+        if (reader, writer) not in self.clients:
+            self.clients.append((reader, writer))
+
         while True:
-            data = await reader.read()
+            data = await reader.read(1024)
 
             if not data:
+                self.clients.pop(self.clients.index((reader, writer)))
                 writer.close()
                 await writer.wait_closed()
                 break
@@ -47,3 +51,8 @@ class Server:
                 answer = await handlers.handle_new_user(self, message)
                 writer.write(answer.encode())
                 await writer.drain()
+
+            else:
+                for client in self.clients:
+                    client[1].write(message.encode())
+                    await client[1].drain()
