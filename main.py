@@ -1,14 +1,16 @@
 __all__ = []
 
-import sys
-import os
 import asyncio
+import sys
 
-from qasync import QEventLoop, QApplication, asyncClose, asyncSlot
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QMainWindow
+from PyQt6.QtWidgets import QMainWindow
+from qasync import asyncClose
+from qasync import asyncSlot
+from qasync import QApplication
+from qasync import QEventLoop
 
-from designs.app import Ui_MainWindow
 from client.client import Connection
+from designs.app import Ui_MainWindow
 
 
 class MainWindow(QMainWindow):
@@ -19,36 +21,46 @@ class MainWindow(QMainWindow):
         self.ui.setupUi(self)
 
         self.connection = Connection(self.ui)
-        self.username = 'dummy'
-
+        self.username = ''
 
         self.ui.stackedWidget.setCurrentIndex(0)
 
-        self.ui.pushButton.clicked.connect(self.on_join_button_clicked)
-        self.ui.textEdit.setReadOnly(True)
-        self.ui.lineEdit.returnPressed.connect(self.send_message)
+        self.ui.connect_button.clicked.connect(self.on_join_button_clicked)
+        self.ui.chat.setReadOnly(True)
+        self.ui.message_entry.returnPressed.connect(self.send_message)
 
     @asyncSlot()
     async def send_message(self):
-        message = self.ui.lineEdit.text()
-        self.ui.lineEdit.setText('')
-        await self.connection.send(f'{self.username}: {message}')
+        message = self.ui.message_entry.text()
+        self.ui.message_entry.setText('')
+        await self.connection.send(
+            {
+                'type': 'message',
+                'message': message,
+            },
+        )
 
     @asyncSlot()
     async def on_join_button_clicked(self):
-        await self.connection.connect()
+        self.username = self.ui.username_input.text()
 
-        self.username = self.ui.lineEdit_2.text()
+        if self.username:
+            if not self.connection.writer:
+                await self.connection.connect()
 
-        await self.connection.send(f'NEWUSER {self.username}')
-        self.ui.stackedWidget.setCurrentIndex(1)
+            await self.connection.send(
+                {
+                    'type': 'connection',
+                    'username': self.username,
+                },
+            )
 
     @asyncClose
     async def closeEvent(self, event):
         print('closing')
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     app = QApplication(sys.argv)
 
     event_loop = QEventLoop(app)

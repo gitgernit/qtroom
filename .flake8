@@ -1,5 +1,6 @@
 [flake8]
 exclude =
     venv
+    designs
 max-complexity = 10
 import-order-style = google

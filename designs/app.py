@@ -1,4 +1,4 @@
-# Form implementation generated from reading ui file 'app.ui'
+# Form implementation generated from reading ui file 'designs/app.ui'
 #
 # Created by: PyQt6 UI code generator 6.6.1
 #
@@ -14,7 +14,8 @@ from PyQt6 import QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(453, 280)
+        MainWindow.resize(545, 430)
+        MainWindow.setStyleSheet("background-color: #074173;")
         self.centralwidget = QtWidgets.QWidget(parent=MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.centralwidget)
@@ -29,18 +30,25 @@ class Ui_MainWindow(object):
         self.stackedWidget.setObjectName("stackedWidget")
         self.homepage = QtWidgets.QWidget()
         self.homepage.setMaximumSize(QtCore.QSize(587, 394))
+        self.homepage.setStyleSheet("background-color: #074173;")
         self.homepage.setObjectName("homepage")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.homepage)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.gridLayout = QtWidgets.QGridLayout()
         self.gridLayout.setObjectName("gridLayout")
-        self.pushButton = QtWidgets.QPushButton(parent=self.homepage)
-        self.pushButton.setObjectName("pushButton")
-        self.gridLayout.addWidget(self.pushButton, 3, 1, 1, 1)
+        self.connect_button = QtWidgets.QPushButton(parent=self.homepage)
+        self.connect_button.setStyleSheet("border: 2px solid #153448;\n"
+"padding: 2px;\n"
+"border-radius: 5px;\n"
+"background-color: #3C5B6F;\n"
+" color: #DFD0B8;")
+        self.connect_button.setObjectName("connect_button")
+        self.gridLayout.addWidget(self.connect_button, 3, 1, 1, 1)
         spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Expanding)
         self.gridLayout.addItem(spacerItem, 6, 1, 1, 1)
         self.label = QtWidgets.QLabel(parent=self.homepage)
         self.label.setStyleSheet("font-size: 15px;\n"
+"color: #DFD0B8;\n"
 "")
         self.label.setObjectName("label")
         self.gridLayout.addWidget(self.label, 1, 1, 1, 1)
@@ -52,46 +60,64 @@ class Ui_MainWindow(object):
         self.gridLayout.addItem(spacerItem3, 3, 0, 1, 1)
         spacerItem4 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Expanding)
         self.gridLayout.addItem(spacerItem4, 0, 1, 1, 1)
-        self.lineEdit_2 = QtWidgets.QLineEdit(parent=self.homepage)
-        self.lineEdit_2.setObjectName("lineEdit_2")
-        self.gridLayout.addWidget(self.lineEdit_2, 2, 1, 1, 1)
+        self.username_input = QtWidgets.QLineEdit(parent=self.homepage)
+        self.username_input.setStyleSheet("border: 2px solid #153448;\n"
+"border-radius: 5px;\n"
+"padding-left: 2px;\n"
+"background-color: #3C5B6F; color: #DFD0B8;\n"
+"")
+        self.username_input.setText("")
+        self.username_input.setObjectName("username_input")
+        self.gridLayout.addWidget(self.username_input, 2, 1, 1, 1)
         spacerItem5 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Expanding)
         self.gridLayout.addItem(spacerItem5, 4, 1, 1, 1)
         self.verticalLayout_2.addLayout(self.gridLayout)
         self.stackedWidget.addWidget(self.homepage)
         self.chatroom = QtWidgets.QWidget()
+        self.chatroom.setStyleSheet("background-color: #074173;")
         self.chatroom.setObjectName("chatroom")
         self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.chatroom)
         self.verticalLayout_3.setObjectName("verticalLayout_3")
         self.gridLayout_2 = QtWidgets.QGridLayout()
         self.gridLayout_2.setObjectName("gridLayout_2")
-        self.textEdit = QtWidgets.QTextEdit(parent=self.chatroom)
-        self.textEdit.setStyleSheet("font-size: 30px;")
-        self.textEdit.setObjectName("textEdit")
-        self.gridLayout_2.addWidget(self.textEdit, 0, 0, 1, 1)
-        self.lineEdit = QtWidgets.QLineEdit(parent=self.chatroom)
-        self.lineEdit.setText("")
-        self.lineEdit.setObjectName("lineEdit")
-        self.gridLayout_2.addWidget(self.lineEdit, 1, 0, 1, 1)
+        self.chat = QtWidgets.QTextEdit(parent=self.chatroom)
+        self.chat.setStyleSheet("font-size: 20px;\n"
+"border: 2px solid #3C5B6F;\n"
+"border-radius: 5px;\n"
+"background-color: #3C5B6F; \n"
+"color: #DFD0B8;\n"
+"padding-left: 2px;")
+        self.chat.setObjectName("chat")
+        self.gridLayout_2.addWidget(self.chat, 0, 0, 1, 1)
+        self.message_entry = QtWidgets.QLineEdit(parent=self.chatroom)
+        self.message_entry.setStyleSheet("font-size: 10px;\n"
+"border: 2px solid #3C5B6F;\n"
+"border-radius: 5px;\n"
+"background-color: #3C5B6F; \n"
+"color: #DFD0B8;\n"
+"padding-left: 2px;")
+        self.message_entry.setText("")
+        self.message_entry.setObjectName("message_entry")
+        self.gridLayout_2.addWidget(self.message_entry, 1, 0, 1, 1)
         self.verticalLayout_3.addLayout(self.gridLayout_2)
         self.stackedWidget.addWidget(self.chatroom)
         self.verticalLayout.addWidget(self.stackedWidget)
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
-        self.stackedWidget.setCurrentIndex(1)
+        self.stackedWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.pushButton.setText(_translate("MainWindow", "Войти в комнату"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "qtroom"))
+        self.connect_button.setText(_translate("MainWindow", "Войти в комнату"))
         self.label.setText(_translate("MainWindow", "Ваше имя:"))
-        self.textEdit.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+        self.chat.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:30px; font-weight:400; font-style:normal;\">\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'MS Shell Dlg 2\';\"><br /></p></body></html>"))
+"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:20px; font-weight:400; font-style:normal;\">\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'MS Shell Dlg 2\'; font-size:30px;\"><br /></p></body></html>"))
 
 
 if __name__ == "__main__":

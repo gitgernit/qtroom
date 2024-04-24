@@ -1,6 +1,7 @@
 __all__ = []
 
 import asyncio
+import json
 import os
 
 import dotenv
@@ -18,13 +19,12 @@ REDIS_DB = os.getenv('REDIS_DB', default=0)
 
 class Server:
     def __init__(self):
-        self.redis = redis.Redis(host=REDIS_HOST, port=REDIS_PORT,
-                                 db=REDIS_DB)
+        self.redis = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=REDIS_DB)
         self.clients = []
+        self.writers = {}
 
     async def startup(self):
-        server = await asyncio.start_server(
-            self.handle_client, HOST, PORT)
+        server = await asyncio.start_server(self.handle_client, HOST, PORT)
 
         addrs = ', '.join(str(sock.getsockname()) for sock in server.sockets)
         print(f'Serving on {addrs}')
@@ -33,26 +33,67 @@ class Server:
             await server.serve_forever()
 
     async def handle_client(self, reader, writer):
-        if (reader, writer) not in self.clients:
-            self.clients.append((reader, writer))
+        if (
+            reader,
+            writer,
+        ) not in self.clients:
+            self.clients.append(
+                (reader, writer),
+            )
 
         while True:
-            data = await reader.read(1024)
+            try:
+                data = await reader.read(1024)
 
-            if not data:
-                self.clients.pop(self.clients.index((reader, writer)))
-                writer.close()
-                await writer.wait_closed()
+            except ConnectionResetError:
+                await self.destroy_client(reader, writer)
                 break
 
-            message = data.decode()
+            if not data:
+                await self.destroy_client(reader, writer)
+                break
 
-            if message.startswith('NEWUSER'):
-                answer = await handlers.handle_new_user(self, message)
-                writer.write(answer.encode())
-                await writer.drain()
+            message = json.loads(data.decode())
 
-            else:
-                for client in self.clients:
-                    client[1].write(message.encode())
-                    await client[1].drain()
+            match message['type']:
+                case 'connection':
+                    validity, token = await handlers.handle_new_user(
+                        self,
+                        message,
+                    )
+                    data = {
+                        'type': 'connection',
+                        'valid': validity,
+                        'token': str(token),
+                    }
+
+                    if token:
+                        self.writers[writer] = str(token)
+
+                    writer.write(json.dumps(data).encode())
+                    await writer.drain()
+
+                case 'message':
+                    if await handlers.message_is_valid(self, message['token']):
+                        username = self.redis.hget(
+                            message['token'],
+                            'username',
+                        ).decode()
+                        msg = message['message']
+                        data = {
+                            'type': 'message',
+                            'username': username,
+                            'message': msg,
+                        }
+
+                    for client in self.clients:
+                        client[1].write(json.dumps(data).encode())
+                        await client[1].drain()
+
+    async def destroy_client(self, reader, writer):
+        self.redis.delete(self.writers.get(writer, ''))
+
+        self.clients.pop(self.clients.index((reader, writer)))
+        self.writers.pop(writer, None)
+
+        writer.close()

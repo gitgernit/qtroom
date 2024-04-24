@@ -1,7 +1,24 @@
+import uuid
+
+
 async def handle_new_user(server, message):
-    username = message.split()[-1]
+    username = message['username']
 
-    if server.redis.exists(username):
-        return 'taken'
+    keys = server.redis.keys('*')
 
-    return 'valid'
+    for key in keys:
+        if server.redis.hget(key, 'username').decode() == username:
+            return False, ''
+
+    user_id = uuid.uuid4()
+    server.redis.hset(str(user_id), mapping={'username': username})
+
+    return True, user_id
+
+
+async def message_is_valid(server, token):
+    if server.redis.exists(token):
+        return True
+
+    else:
+        return False
