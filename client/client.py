@@ -35,7 +35,7 @@ class Connection:
                     case 'connection':
                         if message['valid']:
                             self.token = message['token']
-                            self.ui.stackedWidget.setCurrentIndex(1)
+                            self.ui.stackedWidget.setCurrentIndex(1) # TODO: fix the heavy delay
 
                         else:
                             pass

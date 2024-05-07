@@ -2,5 +2,7 @@
 exclude =
     venv
     designs
+    server
+    client
 max-complexity = 10
 import-order-style = google
